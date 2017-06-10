@@ -1,0 +1,2 @@
+FROM gcr.io/google_containers/kube-apiserver-amd64:v1.5.7
+MAINTAINER cheney.pan <cheney.pan@aliyun.com>
