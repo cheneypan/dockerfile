@@ -30,7 +30,7 @@ docker.io/weaveworks/weave-kube                          | 1.9.7
 
 ### 下载镜像
 
-通过`docker hub`跳转。
+通过`docker hub`中转。
 
 pull.images-v1.6.4.sh
 
