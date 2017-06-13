@@ -11,7 +11,7 @@ SELINUX=disabled
 ... ...
 ```
 
-正常需重启才能生效，但setenforce 0可临时关闭selinux。
+正常需重启才能生效，但`setenforce 0`可临时关闭selinux。
 
 ```
 $ setenforce 0
@@ -65,7 +65,7 @@ EOF
 $ systemctl daemon-reload && systemctl restart docker
 ```
 
-## 安装
+## 安装集群
 
 ### images
 

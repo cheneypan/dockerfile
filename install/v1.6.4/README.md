@@ -28,7 +28,9 @@ docker.io/weaveworks/weave-npc                           | 1.9.7
 docker.io/weaveworks/weave-kube                          | 1.9.7
 
 
-### 下载脚本
+### 下载镜像
+
+通过`docker hub`跳转。
 
 pull.images-v1.6.4.sh
 
