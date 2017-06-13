@@ -2,14 +2,19 @@
 
 ## 环境初始化
 
+#### 关闭SELinux
+
 ```
-# vi /etc/selinux/config 
-# This file controls the state of SELinux on the system.
-# SELINUX= can take one of these three values:
-#     enforcing - SELinux security policy is enforced.
-#     permissive - SELinux prints warnings instead of enforcing.
-#     disabled - No SELinux policy is loaded.
+$ vi /etc/selinux/config 
+... ...
 SELINUX=disabled
+... ...
+```
+
+正常需重启才能生效，但setenforce 0可临时关闭selinux。
+
+```
+setenforce 0
 ```
 
 ```
