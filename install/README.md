@@ -83,8 +83,15 @@ kubeadm init --pod-network-cidr 10.244.0.0/16 --kubernetes-version=v1.6.4
 
 ### 安装CNI
 
+未安装时，会抛异常`cni config uninitialized`，解决方案[issue/cni config uninitialized.md](./issue/cni config uninitialized.md)
+
 ```
 $ kubectl apply -f https://git.io/weave-kube-1.6
 ```
 
-未安装时，会抛异常`cni config uninitialized`，解决方案[issue/cni config uninitialized.md](./issue/cni config uninitialized.md)
+无法自动下载时，可使用提供的yaml文件：
+
+```
+$ kubectl apply -f ./yaml/weave-daemonset-k8s-1.6.yaml
+```
+
