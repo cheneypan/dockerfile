@@ -80,3 +80,11 @@ $ systemctl daemon-reload && systemctl restart docker
 ```
 kubeadm init --pod-network-cidr 10.244.0.0/16 --kubernetes-version=v1.6.4
 ```
+
+### 安装CNI
+
+```
+$ kubectl apply -f https://git.io/weave-kube-1.6
+```
+
+未安装时，会抛异常`cni config uninitialized`，解决方案[issue/cni config uninitialized.md](./issue/cni config uninitialized.md)

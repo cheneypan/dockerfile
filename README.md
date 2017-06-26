@@ -5,7 +5,7 @@
 
 each `gcr.io/google_containers` image mirror
 
-[Docker Hub 镜像站点](https://cr.console.aliyun.com/?spm=5176.1971733.0.2.F7INX2#/accelerator)
+阿里云提供的[Docker Hub 镜像站点](https://cr.console.aliyun.com/?spm=5176.1971733.0.2.F7INX2#/accelerator)
 
 ## kubeadm install
 
