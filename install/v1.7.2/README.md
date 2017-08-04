@@ -26,6 +26,19 @@ $ yum install docker-ce-17.06.0.ce-1.el7.centos
 $ systemctl start docker && systemctl enable docker
 ```
 
+修改各节点docker的cgroup driver使其和kubelet一致，即修改或创建/etc/docker/daemon.json，加入下面的内容：
+
+```
+$ [root@k8s01 ~]# vim /etc/docker/daemon.json
+
+{
+  "registry-mirrors": ["https://i9up8qq1.mirror.aliyuncs.com", "https://registry.docker-cn.com"],
+  "exec-opts": ["native.cgroupdriver=systemd"]
+}
+
+$ systemctl daemon-reload && systemctl restart docker
+```
+
 Docker从1.13版本开始调整了默认的防火墙规则，禁用了iptables filter表中FOWARD链，这样会引起Kubernetes集群中跨Node的Pod无法通信，在各个Docker节点执行下面的命令：
 
 ```
@@ -86,29 +99,34 @@ $ systemctl disable firewalld.service && systemctl stop firewalld.service
 $ systemctl enable kubelet && systemctl start kubelet
 ```
 
-修改各节点docker的cgroup driver使其和kubelet一致，即修改或创建/etc/docker/daemon.json，加入下面的内容：
+### master
 
 ```
-
+kubeadm init \
+   --pod-network-cidr 10.244.0.0/16 \
+   --kubernetes-version=v1.7.2 \
+   --apiserver-advertise-address=10.10.12.31 \
+   --skip-preflight-checks
 ```
 
 ## 镜像
 
 ### Master Images
 
-Image Name                                               | Version
----                                                      |---
-gcr.io/google_containers/k8s-dns-sidecar-amd64           | 1.14.1
-gcr.io/google_containers/k8s-dns-dnsmasq-nanny-amd64     | 1.14.1
-gcr.io/google_containers/k8s-dns-kube-dns-amd64          | 1.14.1
-gcr.io/google_containers/kube-controller-manager-amd64   | v1.7.2
-gcr.io/google_containers/kube-apiserver-amd64            | v1.7.2
-gcr.io/google_containers/kube-scheduler-amd64            | v1.7.2
-gcr.io/google_containers/etcd-amd64                      | 3.0.17
-gcr.io/google_containers/kube-proxy-amd64                | v1.6.4
-gcr.io/google_containers/pause-amd64                     | 3.0
-docker.io/weaveworks/weave-npc                           | 1.9.7
-docker.io/weaveworks/weave-kube                          | 1.9.7
+```
+REPOSITORY                                               TAG                 IMAGE ID            CREATED             SIZE
+gcr.io/google_containers/kube-proxy-amd64                v1.7.2              e7ba9fbdf364        40 hours ago        115MB
+gcr.io/google_containers/kube-scheduler-amd64            v1.7.2              0d33fd775e00        41 hours ago        77.2MB
+gcr.io/google_containers/kube-apiserver-amd64            v1.7.2              d6fdafdff0af        41 hours ago        186MB
+gcr.io/google_containers/k8s-dns-kube-dns-amd64          1.14.4              a458d31f8b2c        41 hours ago        49.4MB
+gcr.io/google_containers/kube-controller-manager-amd64   v1.7.2              75bc21986d92        41 hours ago        138MB
+gcr.io/google_containers/k8s-dns-dnsmasq-nanny-amd64     1.14.4              ef75f942b3c8        42 hours ago        41.4MB
+gcr.io/google_containers/k8s-dns-sidecar-amd64           1.14.4              c2e31fcbeef6        42 hours ago        41.8MB
+gcr.io/google_containers/pause-amd64                     3.0                 b42f5a67adc0        7 weeks ago         747kB
+gcr.io/google_containers/etcd-amd64                      3.0.17              92f272c47f5a        7 weeks ago         169MB
+weaveworks/weave-npc                                     2.0.1               4f71bca714a3        4 weeks ago         54.7MB
+weaveworks/weave-kube                                    2.0.1               d2099d50a03b        4 weeks ago         101MB
+```
 
 ### Node Images
 
@@ -133,17 +151,8 @@ echo pull all images needed of "gcr.io/google_containers"
 echo -----------------------------------------------------------------------------
 
 images=(
-k8s-dns-sidecar-amd64:1.14.1
-k8s-dns-sidecar-amd64:1.14.2
-k8s-dns-sidecar-amd64:1.14.3
 k8s-dns-sidecar-amd64:1.14.4
-k8s-dns-dnsmasq-nanny-amd64:1.14.1
-k8s-dns-dnsmasq-nanny-amd64:1.14.2
-k8s-dns-dnsmasq-nanny-amd64:1.14.3
 k8s-dns-dnsmasq-nanny-amd64:1.14.4
-k8s-dns-kube-dns-amd64:1.14.1
-k8s-dns-kube-dns-amd64:1.14.2
-k8s-dns-kube-dns-amd64:1.14.3
 k8s-dns-kube-dns-amd64:1.14.4
 kube-controller-manager-amd64:v1.7.2
 kube-apiserver-amd64:v1.7.2
@@ -163,6 +172,12 @@ do
 done
 ```
 
+---
+
+###### QA
+
+- [The connection to the server localhost:8080 was refused - did you specify the right host or port?](../issue/did%20you%20specify%20the%20right%20host%20or%20port.md)
+- [issue/cni config uninitialized.md](../issue/cni%20config%20uninitialized.md)
 
 --- 
 
