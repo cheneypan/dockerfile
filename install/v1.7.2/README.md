@@ -114,28 +114,34 @@ kubeadm init \
 ### Master Images
 
 ```
+[root@k8s01 ~]# docker images
 REPOSITORY                                               TAG                 IMAGE ID            CREATED             SIZE
-gcr.io/google_containers/kube-proxy-amd64                v1.7.2              e7ba9fbdf364        40 hours ago        115MB
-gcr.io/google_containers/kube-scheduler-amd64            v1.7.2              0d33fd775e00        41 hours ago        77.2MB
-gcr.io/google_containers/kube-apiserver-amd64            v1.7.2              d6fdafdff0af        41 hours ago        186MB
-gcr.io/google_containers/k8s-dns-kube-dns-amd64          1.14.4              a458d31f8b2c        41 hours ago        49.4MB
-gcr.io/google_containers/kube-controller-manager-amd64   v1.7.2              75bc21986d92        41 hours ago        138MB
-gcr.io/google_containers/k8s-dns-dnsmasq-nanny-amd64     1.14.4              ef75f942b3c8        42 hours ago        41.4MB
-gcr.io/google_containers/k8s-dns-sidecar-amd64           1.14.4              c2e31fcbeef6        42 hours ago        41.8MB
-gcr.io/google_containers/pause-amd64                     3.0                 b42f5a67adc0        7 weeks ago         747kB
-gcr.io/google_containers/etcd-amd64                      3.0.17              92f272c47f5a        7 weeks ago         169MB
-weaveworks/weave-npc                                     2.0.1               4f71bca714a3        4 weeks ago         54.7MB
-weaveworks/weave-kube                                    2.0.1               d2099d50a03b        4 weeks ago         101MB
+gcr.io/google_containers/kube-proxy-amd64                v1.7.2              e7ba9fbdf364        7 days ago          115MB
+gcr.io/google_containers/kube-scheduler-amd64            v1.7.2              0d33fd775e00        7 days ago          77.2MB
+gcr.io/google_containers/kube-apiserver-amd64            v1.7.2              d6fdafdff0af        7 days ago          186MB
+gcr.io/google_containers/k8s-dns-kube-dns-amd64          1.14.4              a458d31f8b2c        7 days ago          49.4MB
+gcr.io/google_containers/kube-controller-manager-amd64   v1.7.2              75bc21986d92        7 days ago          138MB
+gcr.io/google_containers/k8s-dns-dnsmasq-nanny-amd64     1.14.4              ef75f942b3c8        8 days ago          41.4MB
+gcr.io/google_containers/k8s-dns-sidecar-amd64           1.14.4              c2e31fcbeef6        8 days ago          41.8MB
+weaveworks/weave-npc                                     2.0.1               4f71bca714a3        5 weeks ago         54.7MB
+weaveworks/weave-kube                                    2.0.1               d2099d50a03b        5 weeks ago         101MB
+gcr.io/google_containers/pause-amd64                     3.0                 b42f5a67adc0        8 weeks ago         747kB
+gcr.io/google_containers/etcd-amd64                      3.0.17              92f272c47f5a        2 months ago        169MB
 ```
 
 ### Node Images
 
-Image Name                                               | Version
----                                                      |---
-gcr.io/google_containers/kube-proxy-amd64                | v1.7.2
-gcr.io/google_containers/pause-amd64                     | 3.0
-docker.io/weaveworks/weave-npc                           | 1.9.7
-docker.io/weaveworks/weave-kube                          | 1.9.7
+```
+[root@k8s02 ~]# docker images
+REPOSITORY                                             TAG                 IMAGE ID            CREATED             SIZE
+gcr.io/google_containers/kube-proxy-amd64              v1.7.2              e7ba9fbdf364        7 days ago          115MB
+gcr.io/google_containers/k8s-dns-kube-dns-amd64        1.14.4              a458d31f8b2c        7 days ago          49.4MB
+gcr.io/google_containers/k8s-dns-dnsmasq-nanny-amd64   1.14.4              ef75f942b3c8        8 days ago          41.4MB
+gcr.io/google_containers/k8s-dns-sidecar-amd64         1.14.4              c2e31fcbeef6        8 days ago          41.8MB
+weaveworks/weave-npc                                   2.0.1               4f71bca714a3        5 weeks ago         54.7MB
+weaveworks/weave-kube                                  2.0.1               d2099d50a03b        5 weeks ago         101MB
+gcr.io/google_containers/pause-amd64                   3.0                 b42f5a67adc0        8 weeks ago         747kB
+```
 
 
 ### 下载镜像
@@ -171,6 +177,24 @@ do
   echo --------------------------------------------------------------------
 done
 ```
+
+### 安装CNI
+
+未安装时，会抛异常`cni config uninitialized`，解决方案 [issue/cni config uninitialized.md](../issue/cni%20config%20uninitialized.md)
+
+```
+$ kubectl apply -f https://git.io/weave-kube-1.6
+```
+
+无法自动下载时，可使用提供的yaml文件：
+
+```
+$ kubectl apply -f ./yaml/weave-daemonset-k8s-1.6.yaml
+```
+
+### 安装`kubernetes-dashboard`
+
+[install kubernetes-dashboard](../../gcr.io/kubernetes-dashboard-amd64)
 
 ---
 
