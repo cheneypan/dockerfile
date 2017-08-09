@@ -26,24 +26,6 @@ $ yum install docker-ce-17.06.0.ce-1.el7.centos
 $ systemctl start docker && systemctl enable docker
 ```
 
-修改各节点docker的cgroup driver使其和kubelet一致，即修改或创建/etc/docker/daemon.json，加入下面的内容：
-
-```
-$ [root@k8s01 ~]# vim /etc/docker/daemon.json
-
-{
-  "registry-mirrors": ["https://i9up8qq1.mirror.aliyuncs.com", "https://registry.docker-cn.com"],
-  "exec-opts": ["native.cgroupdriver=systemd"]
-}
-
-$ systemctl daemon-reload && systemctl restart docker
-```
-
-Docker从1.13版本开始调整了默认的防火墙规则，禁用了iptables filter表中FOWARD链，这样会引起Kubernetes集群中跨Node的Pod无法通信，在各个Docker节点执行下面的命令：
-
-```
-$ iptables -P FORWARD ACCEPT
-```
 
 ## 安装kubeadm和kubelet
 
@@ -97,6 +79,24 @@ $ yum install -y kubelet kubeadm kubectl kubernetes-cni
 $ systemctl disable firewalld.service && systemctl stop firewalld.service
 
 $ systemctl enable kubelet && systemctl start kubelet
+```
+
+
+调整`cgroup-driver`，保持一致：
+```
+$ vim /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+... ...
+Environment="KUBELET_CGROUP_ARGS=--cgroup-driver=cgroupfs"
+... ...
+
+$ docker info |grep -i cgroup
+WARNING: overlay: the backing xfs filesystem is formatted without d_type support, which leads to incorrect behavior.
+         Reformat the filesystem with ftype=1 to enable d_type support.
+         Running without d_type support will not be supported in future releases.
+Cgroup Driver: cgroupfs
+
+$ systemctl daemon-reload
+$ systemctl restart docker && systemctl restart kubelet
 ```
 
 ### master
@@ -185,6 +185,7 @@ done
 
 - [使用kubeadm安装Kubernetes 1.7](http://blog.frognew.com/2017/07/kubeadm-install-kubernetes-1.7.html)
 - [在 CentOS 7 下安装配置 shadowsocks](http://morning.work/page/2015-12/install-shadowsocks-on-centos-7.html)
+- [1.6.0 kubelet fails with error "misconfiguration: kubelet cgroup driver: "cgroupfs" is different from docker cgroup driver: "systemd" #43805](https://github.com/kubernetes/kubernetes/issues/43805)
 
 ```
 [root@k8s01 ~]# bash <(curl -s http://morning.work/examples/2015-12/install-shadowsocks.sh)
